@@ -4,16 +4,19 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
+import modelos.Linea;
+import modelos.Ovalo;
+import modelos.Rectangulo;
+import modelos.Trazo;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -36,7 +39,6 @@ public class FrmEditor extends JFrame {
     int y;
     Color color;
     String nombreArchivo = "";
-
 
     public FrmEditor() {
 
@@ -77,7 +79,7 @@ public class FrmEditor extends JFrame {
         tbEditor.add(btnGuardar);
 
         cmbTipo.setModel(
-                new DefaultComboBoxModel(Arrays.stream(TipoTrazo.values()).map(Enum::name).toArray(String[]::new)));
+                new DefaultComboBoxModel(TipoTrazo.values()));
         tbEditor.add(cmbTipo);
 
         for (int i = 0; i < 256; i++) {
@@ -170,7 +172,7 @@ public class FrmEditor extends JFrame {
     }
 
     private void setColor() {
-        Color color = new Color(cmbColorR.getSelectedIndex(), cmbColorG.getSelectedIndex(),
+        color = new Color(cmbColorR.getSelectedIndex(), cmbColorG.getSelectedIndex(),
                 cmbColorB.getSelectedIndex());
         lblColor.setBackground(color);
     }
@@ -197,6 +199,32 @@ public class FrmEditor extends JFrame {
 
     private void pnlGraficaMouseClicked(MouseEvent evt) {
 
+        if (estado == Estado.NADA) {
+            x = evt.getX();
+            y = evt.getY();
+            estado = Estado.TRAZANDO;
+
+        } else if (estado == Estado.TRAZANDO) {
+            Dibujo.limpiarPanel(pnlGrafica);
+            var g = pnlGrafica.getGraphics();
+            Trazo trazo = null;
+            switch ((TipoTrazo) cmbTipo.getSelectedItem()) {
+                case LINEA:
+                    trazo = new Linea(x, y, evt.getX(), evt.getY());
+                    break;
+                case RECTANGULO:
+                    trazo = new Rectangulo(x, y, evt.getX(), evt.getY());
+                    break;
+                case OVALO:
+                    trazo = new Ovalo(x, y, evt.getX(), evt.getY());
+                    break;
+            }
+            if (trazo != null) {
+                trazo.dibujar(g, color);
+            }
+            estado = Estado.NADA;
+        }
+        System.out.println("x1=" + x + ", y1=" + y);
     }
 
     private void pnlGraficaMouseMoved(MouseEvent evt) {
