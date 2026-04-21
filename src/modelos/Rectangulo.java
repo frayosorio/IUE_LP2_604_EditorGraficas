@@ -1,7 +1,9 @@
 package modelos;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class Rectangulo extends Trazo {
 
@@ -10,17 +12,29 @@ public class Rectangulo extends Trazo {
     }
 
     @Override
-    public void dibujar(Graphics g, Color color) {
-        g.setColor(color);
-        g.drawRect(getXMinimo(), getYMinimo(), getAncho(), getAlto());
+    public void dibujar(Graphics g, Color color, boolean seleccionando) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(color);
+        g2.setStroke(new BasicStroke(seleccionando ? 4 : 1));
+        g2.drawRect(getXMinimo(), getYMinimo(), getAncho(), getAlto());
     }
 
     @Override
     public boolean cercano(int x, int y) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cercano'");
+        int minX = Math.min(getX1(), getX2());
+        int minY = Math.min(getY1(), getY2());
+        int maxX = Math.max(getX1(), getX2());
+        int maxY = Math.max(getY1(), getY2());
+
+        return esCercanoALinea(x, y, minX, minY, maxX, minY) ||
+                esCercanoALinea(x, y, maxX, minY, maxX, maxY) ||
+                esCercanoALinea(x, y, minX, maxY, maxX, maxY) ||
+                esCercanoALinea(x, y, minX, minY, minX, maxY);
     }
 
-
+    @Override
+    public String getTipo() {
+        return TipoTrazo.RECTANGULO.name();
+    }
 
 }

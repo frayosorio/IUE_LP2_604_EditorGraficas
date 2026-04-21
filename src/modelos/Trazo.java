@@ -61,8 +61,37 @@ public abstract class Trazo {
         return Math.min(y1, y2);
     }
 
-    public abstract void dibujar(Graphics g, Color color);
+    public abstract void dibujar(Graphics g, Color color, boolean seleccionando);
 
     public abstract boolean cercano(int x, int y);
+
+    public abstract String getTipo();
+
+    public static int TOLERANCIA = 5;
+
+    public static boolean esCercanoALinea(int x, int y, int x1, int y1, int x2, int y2) {
+        var distancia = distanciaALinea(x, y, x1, y1, x2, y2);
+        return distancia <= TOLERANCIA;
+    }
+
+    private static double distanciaALinea(int x, int y, int x1, int y1, int x2, int y2) {
+        double px = x2 - x1;
+        double py = y2 - y1;
+        double temp = Math.pow(px, 2) + Math.pow(py, 2);
+        double u = ((x - x1) * px + (y - y1) * py) / temp;
+
+        if (u > 1)
+            u = 1;
+        else if (u < 0)
+            u = 0;
+
+        double xCerca = x1 + u * px;
+        double yCerca = y1 + u * py;
+
+        double dx = x - xCerca;
+        double dy = y - yCerca;
+
+        return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+    }
 
 }
