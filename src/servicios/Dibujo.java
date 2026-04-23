@@ -24,6 +24,10 @@ public class Dibujo {
     private Nodo cabeza;
     private Nodo nodoSeleccionado;
 
+    public Nodo getNodoSeleccionado() {
+        return nodoSeleccionado;
+    }
+
     public Dibujo() {
         cabeza = null;
     }
@@ -39,6 +43,22 @@ public class Dibujo {
                 apuntador = apuntador.siguiente;
             }
             apuntador.siguiente = nuevo;
+        }
+    }
+
+    public void eliminar() {
+        if (cabeza != null && nodoSeleccionado != null) {
+            if (nodoSeleccionado == cabeza) {
+                cabeza = cabeza.siguiente;
+            } else {
+                Nodo anterior = null;
+                var apuntador = cabeza;
+                while (apuntador != nodoSeleccionado) {
+                    anterior = apuntador;
+                    apuntador = apuntador.siguiente;
+                }
+                anterior.siguiente = apuntador.siguiente;
+            }
         }
     }
 
